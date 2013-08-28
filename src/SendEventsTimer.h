@@ -10,11 +10,11 @@
 
 @interface SendEventsTimer : NSThread
 
-@property(nonatomic, retain) NSTimer *m_tSendStats;
+@property(nonatomic, retain) NSTimer *m_tSendEvents;
 
-- (void)sendStats;
-- (void)scheduleStatsTimer;
-- (void)fireStatsTimer;
+- (void)sendEvents;
+- (void)scheduleEventsTimer;
+- (void)fireEventsTimer;
 
 @end
 

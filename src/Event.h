@@ -10,7 +10,7 @@
 
 @interface Event : NSObject
 
-@property (nonatomic, copy) NSString *projectId;
+@property (nonatomic, copy) NSString *apiKey;
 @property (nonatomic, copy) NSString *eventName;
 @property (nonatomic, copy) NSString *eventUniqueId;
 @property (nonatomic, copy) NSNumber *eventTime;

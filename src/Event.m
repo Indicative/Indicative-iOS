@@ -2,6 +2,8 @@
 //  Indicative.m
 //  Indicative
 //
+//  Object representing an Indicative Event.
+//
 //  Created by Indicative on 08-01-13.
 //  Copyright (c) 2013 Indicative. All rights reserved.
 //
@@ -11,7 +13,7 @@
 @implementation Event
 
 -(void)dealloc {
-    self.projectId = nil;
+    self.apiKey = nil;
     self.eventName = nil;
     self.eventUniqueId = nil;
     self.eventTime = nil;
@@ -20,10 +22,15 @@
     [super dealloc];
 }
 
+/**
+ * Creates an NSDictionary representing the Event.
+ *
+ * @returns the NSDictionary representing the Event.
+ */
 -(NSDictionary*)toJson {
     NSMutableDictionary* json = [NSMutableDictionary dictionary];
     
-    [json setValue:self.projectId forKey:@"projectId"];
+    [json setValue:self.apiKey forKey:@"apiKey"];
     
     [json setValue:self.eventName forKey:@"eventName"];
     
@@ -40,6 +47,16 @@
     return json;
 }
 
+/**
+ * Creates the Event and sets its initial values.
+ *
+ * @param eventName    the name of the event
+ * @param properties   a dictionary containing names and values of properties
+ * @param uniqueId     a unique identifier for the user associated with the event
+ * @param apiKey       the project's API key
+ *
+ * @returns the created Event
+ */
 +(Event*)createEvent:(NSString*)eventName withProperties:(NSDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
     for (id value in properties.allValues) {
         Assert([value isKindOfClass:NSString.class] || [value isKindOfClass:NSNumber.class]);
@@ -51,7 +68,7 @@
     data.eventUniqueId = uniqueId;
     data.eventTime = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970] * 1000];
     data.properties = properties;
-    data.projectId = apiKey;
+    data.apiKey = apiKey;
     
     return [data autorelease];
 }

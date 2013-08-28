@@ -2,6 +2,8 @@
 //  SendEventsTimer.m
 //  Indicative
 //
+//  Scheduled timer to periodically send Events to Indicative's API.
+//
 //  Created by Indicative on 08-01-13.
 //  Copyright (c) 2013 Indicative. All rights reserved.
 //
@@ -9,19 +11,23 @@
 #import "SendEventsTimer.h"
 #import "Indicative.h"
 
+// How often to send the Events to Indicative's API
 #define SEND_EVENTS_INTERVAL_SECONDS  60
 
 @implementation SendEventsTimer
 
+/**
+ * Sets the thread's priority and starts the scheduled task.
+ */
 - (void)main
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
-	// set the thread prioritydfg
+	// set the thread priority
 	[NSThread setThreadPriority:0.9];
 	
 	// start this scheduled task here, just so that the runloop will start.
-    [self scheduleStatsTimer];
+    [self scheduleEventsTimer];
 	
 	CFRunLoopRun();
 	
@@ -30,18 +36,23 @@
 
 - (void)dealloc
 {
-	[self.m_tSendStats release];
+	[self.m_tSendEvents release];
 	[super dealloc];
 }
 
 
-
-- (void)sendStats {
-    [[Indicative get] sendStats];
+/**
+ * Sends the events to Indicative's API endpoint.
+ */
+- (void)sendEvents {
+    [[Indicative get] sendEvents];
 }
 
-- (void)scheduleStatsTimer {
-	SEL mySel = @selector(sendStats);
+/**
+ * Schedules the timer to periodically send Events to Indicative's API endpoint.
+ */
+- (void)scheduleEventsTimer {
+	SEL mySel = @selector(sendEvents);
     
 	NSMethodSignature* mySignature = [[self class] instanceMethodSignatureForSelector:mySel];
 	NSInvocation* nsInv = [NSInvocation invocationWithMethodSignature:mySignature];
@@ -49,11 +60,14 @@
 	[nsInv setTarget:self];
 	[nsInv setSelector:mySel];
     
-	self.m_tSendStats = [NSTimer scheduledTimerWithTimeInterval:SEND_EVENTS_INTERVAL_SECONDS invocation:nsInv repeats:YES];
+	self.m_tSendEvents = [NSTimer scheduledTimerWithTimeInterval:SEND_EVENTS_INTERVAL_SECONDS invocation:nsInv repeats:YES];
 }
 
-- (void)fireStatsTimer {
-	[self.m_tSendStats setFireDate:[NSDate date]];
+/**
+ * Fires the timer.
+ */
+- (void)fireEventsTimer {
+	[self.m_tSendEvents setFireDate:[NSDate date]];
 }
 
 @end

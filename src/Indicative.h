@@ -24,6 +24,6 @@
 
 +(void)recordEvent:(NSString*)eventName withProperties:(NSDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
 
--(void)sendStats;
+-(void)sendEvents;
 
 @end
