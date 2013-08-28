@@ -7,4 +7,4 @@ Standalone client for iOS apps.  Events are queued up in an NSMutableArray, and 
 
 Sample usage: [Indicative recordEvent:@"Registration" withProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"Male", @"Gender", @"25", @"Age", nil] withUniqueId:@"user47"];
 
-For more details, see our documentation at: http://staging.skunkalytics.com/docs/integration.html
+For more details, see our documentation at: http://www.indicative.com/docs/integration.html
