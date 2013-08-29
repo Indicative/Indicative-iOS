@@ -1,6 +1,3 @@
-iOS
-===
-
 iOS Client for Indicative's REST API
 
 This REST client creates a JSON representation of your event and posts it to Indicative's Event endpoint.
