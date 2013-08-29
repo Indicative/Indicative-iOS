@@ -13,7 +13,7 @@ Sample usage:
     // In the didFinishLaunchingWithOptions: method of your main app   
     // delegate, call the launch: method with your project's API key
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-        [Indicative launch:@"f58163cd-bcd0-4eae-a3e6-9239ea789069"];
+        [Indicative launch:@"Your-API-Key-Goes-Here"];
     }
 
     // Then record events with a single method call
