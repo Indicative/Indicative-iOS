@@ -179,12 +179,10 @@ static Indicative* mIndicative = nil;
     [req setValue:@"application/json" forHTTPHeaderField: @"Content-Type"];
     [req setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
     
-	// post the url to the server
 	NSHTTPURLResponse* resp = nil;
     NSInteger statusCode = 0;
     NSError* error = nil;
 	
-	// post the request synchronously
 	NSData* nsData = [NSURLConnection sendSynchronousRequest:req returningResponse:&resp error:&error];
     
     
