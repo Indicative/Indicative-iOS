@@ -79,7 +79,7 @@ static Indicative* mIndicative = nil;
  * @param properties   a dictionary containing names and values of properties
  * @param uniqueId     a unique identifier for the user associated with the event
  */
-+(void)recordEvent:(NSString*)eventName withProperties:(NSDictionary*)properties withUniqueId:(NSString*)uniqueId{
++(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)properties withUniqueId:(NSString*)uniqueId{
     [self recordEvent:eventName withProperties:properties withUniqueId:uniqueId withApiKey:[self get].apiKey];
 }
 
@@ -91,7 +91,7 @@ static Indicative* mIndicative = nil;
  * @param uniqueId     a unique identifier for the user associated with the event
  * @param apiKey       the project's API key
  */
-+(void)recordEvent:(NSString*)eventName withProperties:(NSDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
++(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
     for (id value in properties.allValues) {
         Assert([value isKindOfClass:NSString.class] || [value isKindOfClass:NSNumber.class]);
     }
@@ -174,7 +174,7 @@ static Indicative* mIndicative = nil;
     if(debug){
         NSLog(@"JSON event is: %@", [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease]);
     }
-        
+    
     [req setHTTPBody:postData];
     [req setValue:@"application/json" forHTTPHeaderField: @"Content-Type"];
     [req setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
@@ -185,13 +185,12 @@ static Indicative* mIndicative = nil;
 	
 	NSData* nsData = [NSURLConnection sendSynchronousRequest:req returningResponse:&resp error:&error];
     
-    
     NSHTTPURLResponse *urlResponse = (NSHTTPURLResponse *)resp;
     statusCode = urlResponse.statusCode;
     if(debug){
         if (!error) {
-                NSLog(@"Status Code from Indicative: %li %@", (long)urlResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:urlResponse.statusCode]);
-                NSLog(@"Response Body from Indicative: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
+            NSLog(@"Status Code from Indicative: %li %@", (long)urlResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:urlResponse.statusCode]);
+            NSLog(@"Response Body from Indicative: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
         } else {
             NSLog(@"An error occured with your request to Indicative, Status Code: %i", urlResponse.statusCode);
             NSLog(@"Description: %@", [error localizedDescription]);

@@ -20,9 +20,9 @@
 
 +(Indicative*)launch:(NSString*)apiKey;
 
-+(void)recordEvent:(NSString*)eventName withProperties:(NSDictionary*)withProperties withUniqueId:(NSString*) uniqueId;
++(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)withProperties withUniqueId:(NSString*) uniqueId;
 
-+(void)recordEvent:(NSString*)eventName withProperties:(NSDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
++(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
 
 -(void)sendEvents;
 

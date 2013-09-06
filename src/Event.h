@@ -14,10 +14,10 @@
 @property (nonatomic, copy) NSString *eventName;
 @property (nonatomic, copy) NSString *eventUniqueId;
 @property (nonatomic, copy) NSNumber *eventTime;
-@property (nonatomic, retain) NSDictionary *properties;
+@property (nonatomic, retain) NSMutableDictionary *properties;
 
 -(NSDictionary*)toJson;
 
-+(Event*)createEvent:(NSString*)eventName withProperties:(NSDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
++(Event*)createEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
 
 @end

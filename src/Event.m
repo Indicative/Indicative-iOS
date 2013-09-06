@@ -57,7 +57,7 @@
  *
  * @returns the created Event
  */
-+(Event*)createEvent:(NSString*)eventName withProperties:(NSDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
++(Event*)createEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
     for (id value in properties.allValues) {
         Assert([value isKindOfClass:NSString.class] || [value isKindOfClass:NSNumber.class]);
     }
