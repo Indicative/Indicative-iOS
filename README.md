@@ -19,7 +19,7 @@ Sample usage:
     }
 
     // Then record events with a single method call
-    [Indicative recordEvent:@"Registration" withProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"Male", @"Gender", @"25", @"Age", nil] withUniqueId:@"user47"];
+    [Indicative recordEvent:@"Registration" withProperties:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"Male", @"Gender", @"25", @"Age", nil] withUniqueId:@"user47"];
 
 You should modify and extend this class to your heart's content.  If you make any changes please send a pull request!
 
