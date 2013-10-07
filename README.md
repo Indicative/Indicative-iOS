@@ -14,12 +14,24 @@ Sample usage:
     // delegate, call the launch: method with your project's API key. 
     // You can find yours by loggin in to indicative.com and navigating
     // to the Project Settings page.
+    
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [Indicative launch:@"Your-API-Key-Goes-Here"];
     }
+    
+    // To record an event, first call the createEvent:withUniqueId: method, passing in the name of your event 
+    // and a unique identifier for the user associated with the event. For example:
+    
+    Event *event = [Event createEvent:@"Registration" withUniqueId:@"user47"];
 
-    // Then record events with a single method call
-    [Indicative recordEvent:@"Registration" withProperties:[NSMutableDictionary dictionaryWithObjectsAndKeys:@"Male", @"Gender", @"25", @"Age", nil] withUniqueId:@"user47"];
+    // Next, add properties by calling addProperty:withValue: on your newly created event, like so:
+
+    [event addProperty:@"Gender" withValue:@"Male"];
+    [event addProperty:@"Age" withValue:@"23"];
+    
+    // Finally, when you’re done adding properties, call the recordEvent: method and pass in your event:
+
+    [Indicative recordEvent:event];
 
 You should modify and extend this class to your heart's content.  If you make any changes please send a pull request!
 
