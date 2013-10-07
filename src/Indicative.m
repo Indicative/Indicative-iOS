@@ -73,31 +73,11 @@ static Indicative* mIndicative = nil;
 }
 
 /**
- * Creates an Event object and adds it to an NSMutableArray.
+ * Adds the Event object to an NSMutableArray.
  *
- * @param eventName    the name of the event
- * @param properties   a dictionary containing names and values of properties
- * @param uniqueId     a unique identifier for the user associated with the event
+ * @param event    the Event to be recorded
  */
-+(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)properties withUniqueId:(NSString*)uniqueId{
-    [self recordEvent:eventName withProperties:properties withUniqueId:uniqueId withApiKey:[self get].apiKey];
-}
-
-/**
- * Creates an Event object and adds it to an NSMutableArray.
- *
- * @param eventName    the name of the event
- * @param properties   a dictionary containing names and values of properties
- * @param uniqueId     a unique identifier for the user associated with the event
- * @param apiKey       the project's API key
- */
-+(void)recordEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)properties withUniqueId:(NSString*)uniqueId withApiKey:(NSString*)apiKey{
-    for (id value in properties.allValues) {
-        Assert([value isKindOfClass:NSString.class] || [value isKindOfClass:NSNumber.class]);
-    }
-    
-    Event *event = [Event createEvent:eventName withProperties:properties withUniqueId:uniqueId withApiKey:apiKey];
-    
++(void)recordEvent:(Event*)event {
     @synchronized(self){
         [[self get].unsentEvents addObject:event];
     }
@@ -172,7 +152,7 @@ static Indicative* mIndicative = nil;
     NSData* postData = [NSJSONSerialization dataWithJSONObject:jsonPayload options:0 error:&jsonError];
     
     if(debug){
-        NSLog(@"JSON event is: %@", [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease]);
+        NSLog(@"Indicative JSON event is: %@", [[[NSString alloc] initWithData:postData encoding:NSUTF8StringEncoding] autorelease]);
     }
     
     [req setHTTPBody:postData];
@@ -193,8 +173,8 @@ static Indicative* mIndicative = nil;
             NSLog(@"Response Body from Indicative: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
         } else {
             NSLog(@"An error occured with your request to Indicative, Status Code: %i", urlResponse.statusCode);
-            NSLog(@"Description: %@", [error localizedDescription]);
-            NSLog(@"Response Body: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
+            NSLog(@"Indicative Response Error Description: %@", [error localizedDescription]);
+            NSLog(@"Indicative Response Body: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
         }
     }
     

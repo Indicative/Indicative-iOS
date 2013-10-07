@@ -18,6 +18,7 @@
 
 -(NSDictionary*)toJson;
 
-+(Event*)createEvent:(NSString*)eventName withProperties:(NSMutableDictionary*)withProperties withUniqueId:(NSString*) uniqueId withApiKey:(NSString*) apiKey;
++(Event*)createEvent:(NSString*)eventName withUniqueId:(NSString*) uniqueId;
+-(Event*)addProperty:(NSString*)propertyName withValue:(id)propertyValue;
 
 @end
