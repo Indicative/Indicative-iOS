@@ -12,7 +12,7 @@ Sample usage:
 
     // In the didFinishLaunchingWithOptions: method of your main app   
     // delegate, call the launch: method with your project's API key. 
-    // You can find yours by loggin in to indicative.com and navigating
+    // You can find yours by logging in to indicative.com and navigating
     // to the Project Settings page.
     
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
