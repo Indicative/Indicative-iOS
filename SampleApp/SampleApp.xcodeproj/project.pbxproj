@@ -25,7 +25,7 @@
 		C8F351B019B679F00055D1CF /* SampleAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351AF19B679F00055D1CF /* SampleAppTests.m */; };
 		C8F351C119B67A710055D1CF /* Indicative.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351BC19B67A710055D1CF /* Indicative.m */; };
 		C8F351C219B67A710055D1CF /* IndicativeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351BE19B67A710055D1CF /* IndicativeEvent.m */; };
-		C8F351C319B67A710055D1CF /* IndicativeODIN.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351C019B67A710055D1CF /* IndicativeODIN.m */; };
+		C8F351C319B67A710055D1CF /* IndicativeODIN.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351C019B67A710055D1CF /* IndicativeODIN.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
