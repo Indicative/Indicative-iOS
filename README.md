@@ -34,7 +34,7 @@ Sample usage:
     }];
     
 
-    // To acting user, call indentifyUser: method, passing in the user's unique identifier.
+    // To specify the acting user, call identifyUser: method, passing in the user's unique identifier.
     // If you don't identify the user with your own identifier, we will generate an ID for
     // the user based on their device's MAC address.
     
