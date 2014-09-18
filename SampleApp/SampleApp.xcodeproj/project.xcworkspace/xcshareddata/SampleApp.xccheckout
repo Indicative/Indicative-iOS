@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>6BF36759-A53F-4F6A-BA80-840AEE3C9B61</string>
+	<key>IDESourceControlProjectName</key>
+	<string>SampleApp</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>288FDA35-9400-42B9-B626-1552B480267B</key>
+		<string>ssh://github.com/Indicative/Indicative-iOS.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>SampleApp/SampleApp/SampleApp.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>288FDA35-9400-42B9-B626-1552B480267B</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/Indicative/Indicative-iOS.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>288FDA35-9400-42B9-B626-1552B480267B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>288FDA35-9400-42B9-B626-1552B480267B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Indicative-iOS</string>
+		</dict>
+	</array>
+</dict>
+</plist>

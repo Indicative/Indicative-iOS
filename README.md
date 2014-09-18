@@ -18,22 +18,29 @@ Sample usage:
     - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
         [Indicative launch:@"Your-API-Key-Goes-Here"];
     }
+
     
-    // To record an event, first call the createEvent:withUniqueId: method, passing in the name of your event 
-    // and a unique identifier for the user associated with the event. For example:
+    // To record an event, first call the record: method, passing in the name of your event 
+    // For example:
+
+    [Indicative record:@"Registration"];
+
+
+    // To record an event with properties, call the record:withProperties: method, like so:
+
+    [Indicative record:@"Registration" withProperties:@{
+        @"Gender": @"Male",
+        @"Age": @"23"
+    }];
     
-    Event *event = [Event createEvent:@"Registration" withUniqueId:@"user47"];
 
-    // Next, add properties by calling addProperty:withValue: on your newly created event, like so:
-
-    [event addProperty:@"Gender" withValue:@"Male"];
-    [event addProperty:@"Age" withValue:@"23"];
+    // To acting user, call indentifyUser: method, passing in the user's unique identifier.
+    // If you don't identify the user with your own identifier, we will generate an ID for
+    // the user based on their device's MAC address.
     
-    // Finally, when you’re done adding properties, call the recordEvent: method and pass in your event:
+    [Indicative identifyUser:@"TestUser123"];
 
-    [Indicative recordEvent:event];
-
-You should modify and extend this class to your heart's content.  If you make any changes please send a pull request!
+You should modify and extend this project to your heart's content.  If you make any changes please send a pull request!
 
 As a best practice, consider adding a method that takes as a parameter the object representing your user, and adds certain default properties based on that user's characteristics (e.g., gender, age, etc.).
 
