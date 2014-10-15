@@ -16,7 +16,7 @@
 #define INDICATIVE_TIMEOUT_SECONDS 30
 #define SEND_EVENTS_INTERVAL_SECONDS 60
 #define INDICATIVE_BATCH_SIZE 100
-#define INDICATIVE_DEBUG false
+#define INDICATIVE_DEBUG true
 
 static Indicative* mIndicative = nil;
 
@@ -111,7 +111,14 @@ static Indicative* mIndicative = nil;
     
     Indicative *indicative = [Indicative get];
     indicative.apiKey = apiKey;
-    indicative.uniqueKey = [Indicative generateUniqueKey];
+    
+    [self restoreSavedData];
+    
+    if(!indicative.uniqueKey) {
+        indicative.uniqueKey = [Indicative generateUniqueKey];
+        [self persistData];
+    }
+    
     indicative.deviceProperties = [Indicative generateDeviceProps];
     
     indicative.unsentEvents = [NSMutableArray arrayWithCapacity:INDICATIVE_BATCH_SIZE];
@@ -138,6 +145,9 @@ static Indicative* mIndicative = nil;
 +(Indicative*)identifyUser:(NSString*)uniqueKey {
     Indicative *indicative = [Indicative get];
     indicative.uniqueKey = uniqueKey;
+    
+    [self persistData];
+    
     return indicative;
 }
 
@@ -150,6 +160,24 @@ static Indicative* mIndicative = nil;
         return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
     } else {
         return [[NSUUID UUID] UUIDString];
+    }
+}
+
++(void)persistData {
+    [[NSUserDefaults standardUserDefaults] setObject:[Indicative uniqueKey] forKey:@"indicativeUniqueKey"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    if(INDICATIVE_DEBUG) {
+        NSLog(@"Saved Indicative unique key: %@, %@", [Indicative uniqueKey], [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"]);
+    }
+}
+
++(void)restoreSavedData {
+    NSString *uniqueKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"];
+    if(uniqueKey) {
+        [Indicative get].uniqueKey = uniqueKey;
+        if(INDICATIVE_DEBUG) {
+            NSLog(@"Restored Indicative unique key: %@", [Indicative uniqueKey]);
+        }
     }
 }
 

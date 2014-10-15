@@ -18,7 +18,7 @@
     // Override point for customization after application launch.
     
     [Indicative launch:INDICATIVE_API_KEY];
-    [Indicative identifyUser:@"TestUser123"];
+//    [Indicative identifyUser:@"TestUser123"];
     
     [Indicative record:@"App Launch"];
     
