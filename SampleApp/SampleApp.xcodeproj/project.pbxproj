@@ -25,7 +25,6 @@
 		C8F351B019B679F00055D1CF /* SampleAppTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351AF19B679F00055D1CF /* SampleAppTests.m */; };
 		C8F351C119B67A710055D1CF /* Indicative.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351BC19B67A710055D1CF /* Indicative.m */; };
 		C8F351C219B67A710055D1CF /* IndicativeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351BE19B67A710055D1CF /* IndicativeEvent.m */; };
-		C8F351C319B67A710055D1CF /* IndicativeODIN.m in Sources */ = {isa = PBXBuildFile; fileRef = C8F351C019B67A710055D1CF /* IndicativeODIN.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,8 +64,6 @@
 		C8F351BC19B67A710055D1CF /* Indicative.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Indicative.m; sourceTree = "<group>"; };
 		C8F351BD19B67A710055D1CF /* IndicativeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndicativeEvent.h; sourceTree = "<group>"; };
 		C8F351BE19B67A710055D1CF /* IndicativeEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndicativeEvent.m; sourceTree = "<group>"; };
-		C8F351BF19B67A710055D1CF /* IndicativeODIN.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndicativeODIN.h; sourceTree = "<group>"; };
-		C8F351C019B67A710055D1CF /* IndicativeODIN.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IndicativeODIN.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,8 +182,6 @@
 				C8F351BC19B67A710055D1CF /* Indicative.m */,
 				C8F351BD19B67A710055D1CF /* IndicativeEvent.h */,
 				C8F351BE19B67A710055D1CF /* IndicativeEvent.m */,
-				C8F351BF19B67A710055D1CF /* IndicativeODIN.h */,
-				C8F351C019B67A710055D1CF /* IndicativeODIN.m */,
 			);
 			name = Indicative;
 			path = ../Indicative;
@@ -296,7 +291,6 @@
 				C8F3518F19B679F00055D1CF /* AppDelegate.m in Sources */,
 				C8F3519819B679F00055D1CF /* FirstViewController.m in Sources */,
 				C8F3518B19B679F00055D1CF /* main.m in Sources */,
-				C8F351C319B67A710055D1CF /* IndicativeODIN.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,7 +10,6 @@
 
 #import "Indicative.h"
 #import "IndicativeEvent.h"
-#import "IndicativeODIN.h"
 
 #define INDICATIVE_VERSION @"0.0.2"
 #define INDICATIVE_ENDPOINT @"https://api.indicative.com/service/event/batch"
@@ -147,7 +146,11 @@ static Indicative* mIndicative = nil;
 }
 
 +(NSString*)generateUniqueKey {
-    return ODIN1();
+    if(NSClassFromString(@"UIDevice")) {
+        return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
+    } else {
+        return [[NSUUID UUID] UUIDString];
+    }
 }
 
 +(NSDictionary*)deviceProperties {
