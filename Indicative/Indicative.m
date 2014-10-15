@@ -11,7 +11,7 @@
 #import "Indicative.h"
 #import "IndicativeEvent.h"
 
-#define INDICATIVE_VERSION @"0.0.2"
+#define INDICATIVE_VERSION @"0.0.3"
 #define INDICATIVE_ENDPOINT @"https://api.indicative.com/service/event/batch"
 #define INDICATIVE_TIMEOUT_SECONDS 30
 #define SEND_EVENTS_INTERVAL_SECONDS 60
