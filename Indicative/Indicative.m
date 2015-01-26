@@ -31,7 +31,10 @@ static Indicative* mIndicative = nil;
 
 @end
 
-@implementation Indicative
+@implementation Indicative {
+    // Queue for sending events, should be serial to avoid concurrent access to arrays
+    dispatch_queue_t sendQueue;
+}
 
 /**
  * Instantiates and returns the static Indicative instance.
@@ -48,6 +51,14 @@ static Indicative* mIndicative = nil;
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(id) init {
+    if(self = [super init]){
+        // Create serial queue
+        sendQueue = dispatch_queue_create("com.indicative.ClientQueue", NULL);
+    }
+    return self;
 }
 
 /**
@@ -261,9 +272,7 @@ static Indicative* mIndicative = nil;
  * Sends any events in the NSMutableArray to the Indicative API endpoint. If sent successfully, or if a non-retriable error code is received, the event is removed from the NSMutableArray.
  */
 -(void) sendEvents:(void(^)())callback {
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
-    dispatch_async(queue, ^() {
+    dispatch_async(sendQueue, ^() {
         NSInteger totalSent = 0;
         
         while(self.unsentEvents.count > 0) {
