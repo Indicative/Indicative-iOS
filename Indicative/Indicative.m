@@ -31,7 +31,10 @@ static Indicative* mIndicative = nil;
 
 @end
 
-@implementation Indicative
+@implementation Indicative {
+    // Queue for sending events, should be serial to avoid concurrent access to arrays
+    dispatch_queue_t sendQueue;
+}
 
 /**
  * Instantiates and returns the static Indicative instance.
@@ -48,6 +51,14 @@ static Indicative* mIndicative = nil;
 
 -(void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+-(id) init {
+    if(self = [super init]){
+        // Create serial queue
+        sendQueue = dispatch_queue_create("com.indicative.ClientQueue", NULL);
+    }
+    return self;
 }
 
 /**
@@ -261,9 +272,7 @@ static Indicative* mIndicative = nil;
  * Sends any events in the NSMutableArray to the Indicative API endpoint. If sent successfully, or if a non-retriable error code is received, the event is removed from the NSMutableArray.
  */
 -(void) sendEvents:(void(^)())callback {
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    
-    dispatch_async(queue, ^() {
+    dispatch_async(sendQueue, ^() {
         NSInteger totalSent = 0;
         
         while(self.unsentEvents.count > 0) {
@@ -280,11 +289,11 @@ static Indicative* mIndicative = nil;
                 NSInteger statusCode = [self postRequest:postData];
                 
                 if(INDICATIVE_DEBUG) {
-                    NSLog(@"Received status code: %d", statusCode);
+                    NSLog(@"Received status code: %ld", (long)statusCode);
                 }
                 
                 if(statusCode == 0 || statusCode >= 400) {
-                    NSLog(@"Error while sending events to Indicative: HTTP %d", statusCode);
+                    NSLog(@"Error while sending events to Indicative: HTTP %ld", (long)statusCode);
                     break;
                 }
                 
@@ -293,7 +302,7 @@ static Indicative* mIndicative = nil;
                 totalSent += batch.count;
                 
                 if(INDICATIVE_DEBUG) {
-                    NSLog(@"Sent batch of %d events", batch.count);
+                    NSLog(@"Sent batch of %ld events", (long)batch.count);
                 }
             }
             @catch (NSException* ex) {
@@ -303,7 +312,7 @@ static Indicative* mIndicative = nil;
         }
         
         if(INDICATIVE_DEBUG && totalSent > 0) {
-            NSLog(@"Done sending events. Sent %d total", totalSent);
+            NSLog(@"Done sending events. Sent %ld total", (long)totalSent);
         }
         
         if(callback) {
@@ -335,7 +344,7 @@ static Indicative* mIndicative = nil;
     [req setHTTPBody:postData];
     [req setValue:@"iOS" forHTTPHeaderField: @"Indicative-Client"];
     [req setValue:@"application/json" forHTTPHeaderField: @"Content-Type"];
-    [req setValue:[NSString stringWithFormat:@"%d", postData.length] forHTTPHeaderField:@"Content-Length"];
+    [req setValue:[NSString stringWithFormat:@"%lu", (unsigned long)postData.length] forHTTPHeaderField:@"Content-Length"];
     
 	NSHTTPURLResponse* resp = nil;
     NSInteger statusCode = 0;
@@ -350,7 +359,7 @@ static Indicative* mIndicative = nil;
             NSLog(@"Status Code from Indicative: %li %@", (long)urlResponse.statusCode, [NSHTTPURLResponse localizedStringForStatusCode:urlResponse.statusCode]);
             NSLog(@"Response Body from Indicative: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
         } else {
-            NSLog(@"An error occured with your request to Indicative, Status Code: %i", urlResponse.statusCode);
+            NSLog(@"An error occured with your request to Indicative, Status Code: %li", (long)urlResponse.statusCode);
             NSLog(@"Indicative Response Error Description: %@", [error localizedDescription]);
             NSLog(@"Indicative Response Body: %@", [[NSString alloc] initWithData:nsData encoding:NSUTF8StringEncoding]);
         }
