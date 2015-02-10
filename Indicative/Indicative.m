@@ -26,6 +26,7 @@ static Indicative* mIndicative = nil;
 @property (nonatomic, copy) NSString *uniqueKey;
 @property (nonatomic, retain) NSMutableArray *unsentEvents;
 @property (nonatomic, copy) NSDictionary *deviceProperties;
+@property (nonatomic, copy) NSDictionary *commonProperties;
 
 @property (nonatomic, retain) NSTimer *sendEventTimer;
 
@@ -174,20 +175,45 @@ static Indicative* mIndicative = nil;
     }
 }
 
++(NSDictionary*)commonProperties {
+    return [Indicative get].commonProperties;
+}
+
++(Indicative*)addCommonProperties:(NSDictionary*)properties {
+    Indicative *indicative = [Indicative get];
+    indicative.commonProperties = properties;
+    
+    [self persistData];
+    
+    return indicative;
+}
+
 +(void)persistData {
     [[NSUserDefaults standardUserDefaults] setObject:[Indicative uniqueKey] forKey:@"indicativeUniqueKey"];
+    [[NSUserDefaults standardUserDefaults] setObject:[Indicative commonProperties] forKey:@"indicativeCommonProperties"];
+    
     [[NSUserDefaults standardUserDefaults] synchronize];
     if(INDICATIVE_DEBUG) {
         NSLog(@"Saved Indicative unique key: %@, %@", [Indicative uniqueKey], [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"]);
+        NSLog(@"Saved Indicative common properties: %@, %@", [Indicative commonProperties], [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"]);
     }
 }
 
 +(void)restoreSavedData {
     NSString *uniqueKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"];
+    NSDictionary *commonProperties = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"];
+    
     if(uniqueKey) {
         [Indicative get].uniqueKey = uniqueKey;
         if(INDICATIVE_DEBUG) {
             NSLog(@"Restored Indicative unique key: %@", [Indicative uniqueKey]);
+        }
+    }
+    
+    if(commonProperties) {
+        [Indicative get].commonProperties = commonProperties;
+        if(INDICATIVE_DEBUG) {
+            NSLog(@"Restored Indicative common properties: %@", [Indicative commonProperties]);
         }
     }
 }
@@ -203,6 +229,7 @@ static Indicative* mIndicative = nil;
 +(void)record:(NSString*)eventName withProperties:(NSDictionary*)properties {
     NSMutableDictionary *propertiesToSend = [NSMutableDictionary dictionaryWithDictionary:[Indicative deviceProperties]];
     [propertiesToSend addEntriesFromDictionary:properties];
+    [propertiesToSend addEntriesFromDictionary:[Indicative commonProperties]];
     
     IndicativeEvent *event = [IndicativeEvent createEvent:eventName
                                              withUniqueId:[Indicative uniqueKey]
