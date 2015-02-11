@@ -26,7 +26,7 @@ static Indicative* mIndicative = nil;
 @property (nonatomic, copy) NSString *uniqueKey;
 @property (nonatomic, retain) NSMutableArray *unsentEvents;
 @property (nonatomic, copy) NSDictionary *deviceProperties;
-@property (nonatomic, copy) NSDictionary *commonProperties;
+@property (nonatomic, copy) NSMutableDictionary *commonProperties;
 
 @property (nonatomic, retain) NSTimer *sendEventTimer;
 
@@ -131,6 +131,11 @@ static Indicative* mIndicative = nil;
         [self persistData];
     }
     
+    if(!indicative.commonProperties) {
+        indicative.commonProperties = [NSMutableDictionary dictionary];
+        [self persistData];
+    }
+    
     indicative.deviceProperties = [Indicative generateDeviceProps];
     
     indicative.unsentEvents = [NSMutableArray arrayWithCapacity:INDICATIVE_BATCH_SIZE];
@@ -175,13 +180,22 @@ static Indicative* mIndicative = nil;
     }
 }
 
-+(NSDictionary*)commonProperties {
++(NSMutableDictionary*)commonProperties {
     return [Indicative get].commonProperties;
 }
 
-+(Indicative*)addCommonProperties:(NSDictionary*)properties {
++(Indicative*)addCommonProperties:(NSMutableDictionary*)properties {
     Indicative *indicative = [Indicative get];
-    indicative.commonProperties = properties;
+    [indicative.commonProperties addEntriesFromDictionary:properties];
+    
+    [self persistData];
+    
+    return indicative;
+}
+
++(Indicative*)addCommonProperty:(NSString*)propertyName withValue:(NSString*)propertyValue {
+    Indicative *indicative = [Indicative get];
+    [indicative.commonProperties setObject:propertyValue forKey:propertyName];
     
     [self persistData];
     
@@ -201,7 +215,7 @@ static Indicative* mIndicative = nil;
 
 +(void)restoreSavedData {
     NSString *uniqueKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"];
-    NSDictionary *commonProperties = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"];
+    NSMutableDictionary *commonProperties = [[[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"] mutableCopy];
     
     if(uniqueKey) {
         [Indicative get].uniqueKey = uniqueKey;
