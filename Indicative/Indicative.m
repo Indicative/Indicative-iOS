@@ -16,7 +16,7 @@
 #define INDICATIVE_TIMEOUT_SECONDS 30
 #define SEND_EVENTS_INTERVAL_SECONDS 60
 #define INDICATIVE_BATCH_SIZE 100
-#define INDICATIVE_DEBUG false
+#define INDICATIVE_DEBUG true
 
 static Indicative* mIndicative = nil;
 
@@ -26,7 +26,7 @@ static Indicative* mIndicative = nil;
 @property (nonatomic, copy) NSString *uniqueKey;
 @property (nonatomic, retain) NSMutableArray *unsentEvents;
 @property (nonatomic, copy) NSDictionary *deviceProperties;
-@property (nonatomic, copy) NSMutableDictionary *commonProperties;
+@property (nonatomic, copy) NSDictionary *commonProperties;
 
 @property (nonatomic, retain) NSTimer *sendEventTimer;
 
@@ -128,12 +128,12 @@ static Indicative* mIndicative = nil;
     
     if(!indicative.uniqueKey) {
         indicative.uniqueKey = [Indicative generateUniqueKey];
-        [self persistData];
+        [self persistUniqueKey:indicative.uniqueKey];
     }
     
     if(!indicative.commonProperties) {
-        indicative.commonProperties = [NSMutableDictionary dictionary];
-        [self persistData];
+        indicative.commonProperties = [NSDictionary dictionary];
+        [self persistCommonProperties:indicative.commonProperties];
     }
     
     indicative.deviceProperties = [Indicative generateDeviceProps];
@@ -163,9 +163,14 @@ static Indicative* mIndicative = nil;
     Indicative *indicative = [Indicative get];
     indicative.uniqueKey = uniqueKey;
     
-    [self persistData];
+    [self persistUniqueKey:indicative.uniqueKey];
     
     return indicative;
+}
+
++(void)clearUniqueKey {
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"indicativeUniqueKey"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 +(NSString*)uniqueKey {
@@ -180,54 +185,109 @@ static Indicative* mIndicative = nil;
     }
 }
 
-+(NSMutableDictionary*)commonProperties {
++(NSDictionary*)commonProperties {
     return [Indicative get].commonProperties;
 }
 
-+(Indicative*)addCommonProperties:(NSMutableDictionary*)properties {
++(Indicative*)addCommonProperties:(NSDictionary*)properties {
     Indicative *indicative = [Indicative get];
-    [indicative.commonProperties addEntriesFromDictionary:properties];
     
-    [self persistData];
+    NSMutableDictionary *tempDictionary = [indicative.commonProperties mutableCopy];
+    [tempDictionary addEntriesFromDictionary:properties];
+    
+    indicative.commonProperties = tempDictionary;
+    
+    [self persistCommonProperties:indicative.commonProperties];
     
     return indicative;
 }
 
-+(Indicative*)addCommonProperty:(NSString*)propertyName withValue:(NSString*)propertyValue {
++(Indicative*)addCommonPropertyWithStringValue:(NSString*)propertyValue forName:(NSString*)propertyName {
     Indicative *indicative = [Indicative get];
-    [indicative.commonProperties setObject:propertyValue forKey:propertyName];
     
-    [self persistData];
+    NSMutableDictionary *tempDictionary = [indicative.commonProperties mutableCopy];
+    [tempDictionary setObject:propertyValue forKey:propertyName];
+    
+    indicative.commonProperties = tempDictionary;
+    
+    [self persistCommonProperties:indicative.commonProperties];
+    
+    return indicative;
+}
+
++(Indicative*)addCommonPropertyWithIntValue:(int)propertyValue forName:(NSString*)propertyName {
+    return [Indicative addCommonPropertyWithStringValue:[NSString stringWithFormat:@"%d", propertyValue] forName:propertyName];
+}
+
++(Indicative*)addCommonPropertyWithBoolValue:(BOOL)propertyValue forName:(NSString*)propertyName {
+    return [Indicative addCommonPropertyWithStringValue:(propertyValue ? @"true" : @"false") forName:propertyName];
+}
+
++(Indicative*)removeCommonPropertyWithName:(NSString *)propertyName {
+    Indicative *indicative = [Indicative get];
+    
+    NSMutableDictionary *tempDictionary = [indicative.commonProperties mutableCopy];
+    [tempDictionary removeObjectForKey:propertyName];
+    
+    indicative.commonProperties = tempDictionary;
+    
+    [self persistCommonProperties:indicative.commonProperties];
+    
+    return indicative;
+}
+
++(Indicative*)clearCommonProperties {
+    Indicative *indicative = [Indicative get];
+    
+    indicative.commonProperties = [NSDictionary dictionary];
+    
+    [self persistCommonProperties:indicative.commonProperties];
     
     return indicative;
 }
 
 +(void)persistData {
-    [[NSUserDefaults standardUserDefaults] setObject:[Indicative uniqueKey] forKey:@"indicativeUniqueKey"];
-    [[NSUserDefaults standardUserDefaults] setObject:[Indicative commonProperties] forKey:@"indicativeCommonProperties"];
-    
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    if(INDICATIVE_DEBUG) {
-        NSLog(@"Saved Indicative unique key: %@, %@", [Indicative uniqueKey], [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"]);
-        NSLog(@"Saved Indicative common properties: %@, %@", [Indicative commonProperties], [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"]);
+    [self persistUniqueKey:[Indicative uniqueKey]];
+    [self persistCommonProperties:[Indicative commonProperties]];
+}
+
++(void)persistUniqueKey:(NSString*)uniqueKey {
+    if(uniqueKey) {
+        [[NSUserDefaults standardUserDefaults] setObject:uniqueKey forKey:@"indicativeUniqueKey"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        if(INDICATIVE_DEBUG) {
+            NSLog(@"Saved Indicative unique key: %@, %@", uniqueKey, [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"]);
+        }
+    }
+}
+
++(void)persistCommonProperties:(NSDictionary*)commonProperties {
+    if(commonProperties) {
+        [[NSUserDefaults standardUserDefaults] setObject:commonProperties forKey:@"indicativeCommonProperties"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        if(INDICATIVE_DEBUG) {
+            NSLog(@"Saved Indicative common properties: %@, %@", commonProperties, [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"]);
+        }
     }
 }
 
 +(void)restoreSavedData {
     NSString *uniqueKey = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUniqueKey"];
-    NSMutableDictionary *commonProperties = [[[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"] mutableCopy];
+    NSDictionary *commonProperties = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeCommonProperties"];
     
     if(uniqueKey) {
         [Indicative get].uniqueKey = uniqueKey;
         if(INDICATIVE_DEBUG) {
-            NSLog(@"Restored Indicative unique key: %@", [Indicative uniqueKey]);
+            NSLog(@"Restored Indicative unique key: %@", uniqueKey);
         }
     }
     
     if(commonProperties) {
         [Indicative get].commonProperties = commonProperties;
         if(INDICATIVE_DEBUG) {
-            NSLog(@"Restored Indicative common properties: %@", [Indicative commonProperties]);
+            NSLog(@"Restored Indicative common properties: %@", commonProperties);
         }
     }
 }
