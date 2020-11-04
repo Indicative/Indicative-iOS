@@ -23,7 +23,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [Indicative record:@"iOS - Viewed Page 1"];
+    [Indicative record:@"iOS - Viewed Page 1 (Objective C)"];
     [Indicative record:@"iOS - Page View" withProperties:@{@"page": @(1)}];
 }
 
