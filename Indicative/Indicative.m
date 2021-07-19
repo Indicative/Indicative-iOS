@@ -13,6 +13,7 @@
 
 #define INDICATIVE_VERSION @"0.0.4"
 #define INDICATIVE_ENDPOINT @"https://api.indicative.com/service/event/batch"
+#define INDICATIVE_ALIAS_ENDPOINT @"https://api.indicative.com/service/alias"
 #define INDICATIVE_TIMEOUT_SECONDS 30
 #define SEND_EVENTS_INTERVAL_SECONDS 60
 #define INDICATIVE_BATCH_SIZE 100
@@ -124,13 +125,9 @@ static Indicative* mIndicative = nil;
     Indicative *indicative = [self get];
     indicative.apiKey = apiKey;
     
-    NSString *savedUuid = [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUUID"];
-    if(!savedUuid) {
-        savedUuid = [self generateUniqueKey];
-        
-        // Save UUID so that we can revert to it if the user-specified unique key is cleared
-        [[NSUserDefaults standardUserDefaults] setObject:savedUuid forKey:@"indicativeUUID"];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+    NSString *savedAnonymousId = [Indicative anonymousId];
+    if(!savedAnonymousId) {
+        savedAnonymousId = [self resetAnonymousId];
     }
     
     [self restoreSavedData];
@@ -163,6 +160,17 @@ static Indicative* mIndicative = nil;
     return indicative;
 }
 
++(void)flushEvents {
+    Indicative *indicative = [self get];
+    [indicative sendEvents:^{}];
+}
+
++(void)reset {
+    [Indicative clearUniqueKey];
+    [Indicative resetAnonymousId];
+    [Indicative clearCommonProperties];
+}
+
 +(Indicative*)identifyUser:(NSString*)uniqueKey {
     Indicative *indicative = [self get];
     indicative.uniqueKey = uniqueKey;
@@ -172,21 +180,34 @@ static Indicative* mIndicative = nil;
     return indicative;
 }
 
++(Indicative*)identifyUserWithAlias:(NSString*)uniqueKey {
+    [Indicative identifyUser:uniqueKey];
+    [[Indicative get] sendAlias:uniqueKey
+                          oldId:[Indicative anonymousId]
+                   withCallback:nil];
+    return [self get];
+}
+
 +(void)clearUniqueKey {
     [self get].uniqueKey = nil;
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"indicativeUniqueKey"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 +(NSString*)uniqueKey {
     return [self get].uniqueKey;
 }
 
-+(NSString*)generateUniqueKey {
-    if(NSClassFromString(@"UIDevice")) {
-        return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-    } else {
-        return [[NSUUID UUID] UUIDString];
-    }
++(NSString*)anonymousId {
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"indicativeUUID"];
+}
+
++(NSString*)resetAnonymousId {
+    NSString *anonymousId = [[NSUUID UUID] UUIDString];
+    // Save UUID so that we can revert to it if the user-specified unique key is cleared
+    [[NSUserDefaults standardUserDefaults] setObject:anonymousId forKey:@"indicativeUUID"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    return anonymousId;
 }
 
 +(NSDictionary*)commonProperties {
@@ -390,7 +411,7 @@ static Indicative* mIndicative = nil;
                 
                 NSDictionary *postData = [IndicativeEvent buildJSONDocument:self.apiKey withEvents:batch];
                 
-                NSInteger statusCode = [self postRequest:postData];
+                NSInteger statusCode = [self postRequest:postData url:INDICATIVE_ENDPOINT];
                 
                 if(INDICATIVE_DEBUG) {
                     NSLog(@"Received status code: %ld", (long)statusCode);
@@ -425,6 +446,37 @@ static Indicative* mIndicative = nil;
     });
 }
 
+-(void) sendAlias:(NSString*)newId
+            oldId:(NSString*)oldId
+     withCallback:(void(^)())callback {
+    dispatch_async(sendQueue, ^() {
+        @try {
+            NSDictionary *postData = @{
+                @"apiKey": self.apiKey,
+                @"previousId": oldId,
+                @"newId": newId
+            };
+            
+            NSInteger statusCode = [self postRequest:postData url:INDICATIVE_ALIAS_ENDPOINT];
+            
+            if(INDICATIVE_DEBUG) {
+                NSLog(@"Received status code: %ld", (long)statusCode);
+            }
+            
+            if(statusCode == 0 || statusCode >= 400) {
+                NSLog(@"Error while sending events to Indicative: HTTP %ld", (long)statusCode);
+            }
+        }
+        @catch (NSException* ex) {
+            NSLog(@"Error while preparing events to send to Indicative: %@", ex);
+        }
+    
+        if(callback) {
+            callback();
+        }
+    });
+}
+
 /**
  * Posts the Event to the Indicative API endpoint.
  *
@@ -432,9 +484,10 @@ static Indicative* mIndicative = nil;
  *
  * @returns             the response's status code
  */
--(NSInteger)postRequest:(NSDictionary*)jsonPayload {
+-(NSInteger)postRequest:(NSDictionary*)jsonPayload
+                    url:(NSString*)endpoint {
 	// create a request
-	NSURL* url = [NSURL URLWithString:INDICATIVE_ENDPOINT];
+	NSURL* url = [NSURL URLWithString:endpoint];
 	NSMutableURLRequest* req = [NSMutableURLRequest requestWithURL:url];
     
 	// !! Set this timeout and handle timeout errors.
