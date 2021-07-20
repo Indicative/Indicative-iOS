@@ -23,6 +23,7 @@
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    [self printState:nil];
     [Indicative record:@"iOS - Viewed Page 1 (Objective C)"];
     [Indicative record:@"iOS - Page View" withProperties:@{@"page": @(1)}];
 }
@@ -31,6 +32,35 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(IBAction)printState:(id)sender {
+    NSLog(@"Indicative unique key: %@", [Indicative uniqueKey]);
+    NSLog(@"Indicative anonymousId: %@", [Indicative anonymousId]);
+}
+
+-(IBAction)sendEvent:(id)sender {
+    [Indicative record:@"Event 1" withProperties:@{
+        @"myprop1": @"myval1"
+    }];
+}
+
+-(IBAction)flushEvents:(id)sender {
+    [Indicative flushEvents];
+}
+
+-(IBAction)sendAlias:(id)sender {
+    [Indicative identifyUserWithAlias:@"my aliased user"];
+}
+
+-(IBAction)reset:(id)sender {
+    [Indicative reset];
+    NSLog(@"Indicative unique key: %@", [Indicative uniqueKey]);
+    NSLog(@"Indicative anonymousId: %@", [Indicative anonymousId]);
+}
+
+-(IBAction)setUniqueKey:(id)sender {
+    [Indicative identifyUser:@"Unique asdf"];
 }
 
 @end

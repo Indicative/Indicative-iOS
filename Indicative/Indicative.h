@@ -13,7 +13,13 @@
 
 +(Indicative*)launch:(NSString*)apiKey;
 +(Indicative*)identifyUser:(NSString*)uniqueKey;
++(Indicative*)identifyUserWithAlias:(NSString*)uniqueKey;
 +(void)clearUniqueKey;
++(void)reset;
++(void)flushEvents;
+
++(NSString*)uniqueKey;
++(NSString*)anonymousId;
 
 +(Indicative*)addCommonProperties:(NSDictionary*)properties;
 +(Indicative*)addCommonProperty:(id)propertyValue forName:(NSString*)propertyName;
