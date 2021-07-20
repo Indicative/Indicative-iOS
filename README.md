@@ -70,11 +70,6 @@ Our API -- all are static methods:
 </tr>
 
 <tr>
-<td> +(Indicative*)identifyUser:(NSString*)uniqueKey</td>
-<td> Stores (in NSUserDefaults) a unique identifier to be used for all events that don't have a unique key otherwise specified.</td>
-</tr>
-
-<tr>
 <td> +(void)clearUniqueKey</td>
 <td> Clears the user-specified unique identifier. The uniqueness identifier will fall back to the anonymous ID generated on first initialization.</td>
 </tr>
